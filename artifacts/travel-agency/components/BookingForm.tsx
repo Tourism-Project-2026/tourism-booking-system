@@ -8,6 +8,7 @@ interface BookingFormData {
   phone: string;
   destination_description: string;
   trip_period: string;
+  notes: string;
 }
 
 interface FieldProps {
@@ -91,6 +92,7 @@ export function BookingForm({ onSuccess, className }: BookingFormProps) {
     phone: "",
     destination_description: "",
     trip_period: "",
+    notes: "",
   });
   const [state, setState] = useState<FormState>("idle");
   const [errorMsg, setErrorMsg] = useState<string>("");
@@ -121,7 +123,7 @@ export function BookingForm({ onSuccess, className }: BookingFormProps) {
       }
 
       setState("success");
-      setForm({ client_name: "", phone: "", destination_description: "", trip_period: "" });
+      setForm({ client_name: "", phone: "", destination_description: "", trip_period: "", notes: "" });
       onSuccess?.();
 
       setTimeout(() => setState("idle"), 3000);
@@ -226,6 +228,44 @@ export function BookingForm({ onSuccess, className }: BookingFormProps) {
           placeholder="e.g. Aug 14 – Aug 24, 2025"
           disabled={isSubmitting}
         />
+
+        <div className="flex flex-col gap-1.5">
+          <label
+            htmlFor="notes"
+            className="text-xs font-medium uppercase tracking-widest"
+            style={{
+              color: "var(--color-text-muted)",
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.65rem",
+              letterSpacing: "0.12em",
+            }}
+          >
+            Notes
+          </label>
+          <textarea
+            id="notes"
+            value={form.notes}
+            onChange={(e) => setField("notes")(e.target.value)}
+            placeholder="Any special requests or additional details…"
+            disabled={isSubmitting}
+            rows={3}
+            className="w-full rounded px-3 py-2 text-sm outline-none transition-all duration-150 resize-none"
+            style={{
+              backgroundColor: "var(--color-surface-raised)",
+              border: "1px solid var(--color-border)",
+              color: "var(--color-text-primary)",
+              fontFamily: "var(--font-sans)",
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = "var(--color-accent)";
+              e.currentTarget.style.boxShadow = "0 0 0 2px var(--color-accent-glow)";
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = "var(--color-border)";
+              e.currentTarget.style.boxShadow = "none";
+            }}
+          />
+        </div>
 
         {/* Divider */}
         <div
