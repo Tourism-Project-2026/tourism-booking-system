@@ -19,7 +19,7 @@ run = "pnpm --filter @workspace/travel-agency run dev"
 
 [services.production]
 build = [ "pnpm", "--filter", "@workspace/travel-agency", "run", "build" ]
-run = "node artifacts/travel-agency/.next/standalone/server.js"
+run = "node artifacts/travel-agency/.next/standalone/artifacts/travel-agency/server.js"
 
 [services.env]
 PORT = "19981"
