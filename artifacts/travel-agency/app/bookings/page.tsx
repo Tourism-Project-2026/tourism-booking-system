@@ -226,7 +226,7 @@ export default function BookingsPage() {
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ borderBottom: "1px solid var(--color-border)" }}>
-                {["ID", "Client", "Phone", "Destination", "Trip Period", "Status", "Created"].map((h) => (
+                {["ID", "Client", "Phone", "Destination", "Trip Period", "Notes", "Status", "Created"].map((h) => (
                   <th
                     key={h}
                     style={{
@@ -271,6 +271,11 @@ export default function BookingsPage() {
                   </td>
                   <td style={{ padding: "12px 16px", fontSize: "0.78rem", color: "var(--color-text-secondary)", whiteSpace: "nowrap" }}>
                     {b.trip_period ?? "—"}
+                  </td>
+                  <td style={{ padding: "12px 16px", fontSize: "0.75rem", color: "var(--color-text-muted)", maxWidth: "220px" }}>
+                    <span style={{ display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={b.notes ?? ""}>
+                      {b.notes ?? "—"}
+                    </span>
                   </td>
                   <td style={{ padding: "12px 16px" }}>
                     <StatusDropdown bookingId={b.id} current={b.status} onUpdate={handleStatusUpdate} />
