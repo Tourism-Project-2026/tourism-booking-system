@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Navigation } from "@/components/Navigation";
+import { cookies } from "next/headers";
+import { verifySession, SESSION_COOKIE } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: {
@@ -10,16 +12,23 @@ export const metadata: Metadata = {
   description: "Your gateway to unforgettable journeys.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(SESSION_COOKIE)?.value;
+  const isAdmin = token ? await verifySession(token) : false;
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <div className="min-h-screen flex flex-col" style={{ backgroundColor: "var(--color-background)" }}>
-          <Navigation />
+        <div
+          className="min-h-screen flex flex-col"
+          style={{ backgroundColor: "var(--color-background)" }}
+        >
+          <Navigation isAdmin={isAdmin} />
           <main className="flex-1 px-6 py-6 max-w-screen-2xl mx-auto w-full">
             {children}
           </main>
@@ -31,12 +40,18 @@ export default function RootLayout({
             }}
           >
             <div className="max-w-screen-2xl mx-auto flex items-center justify-between">
-              <span style={{ fontFamily: "var(--font-mono)" }}>
-                TRAVEL/PORTAL v0.1.0
-              </span>
-              <span>
-                {new Date().getFullYear()} &mdash; Internal Use Only
-              </span>
+              {isAdmin ? (
+                <>
+                  <span style={{ fontFamily: "var(--font-mono)" }}>
+                    TRAVEL/PORTAL v0.1.0
+                  </span>
+                  <span>2026 &mdash; Internal Use Only</span>
+                </>
+              ) : (
+                <span style={{ margin: "0 auto" }}>
+                  Travel Portal &copy; 2026
+                </span>
+              )}
             </div>
           </footer>
         </div>

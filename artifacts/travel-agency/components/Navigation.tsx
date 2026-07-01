@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Map,
@@ -11,10 +11,16 @@ import {
   Settings,
   Globe,
   Bell,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const navItems = [
+const guestNavItems = [
+  { href: "/", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/trips", label: "Trips", icon: Map },
+];
+
+const adminNavItems = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
   { href: "/trips", label: "Trips", icon: Map },
   { href: "/bookings", label: "Bookings", icon: CalendarCheck },
@@ -22,8 +28,20 @@ const navItems = [
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
 ];
 
-export function Navigation() {
+interface NavigationProps {
+  isAdmin: boolean;
+}
+
+export function Navigation({ isAdmin }: NavigationProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const navItems = isAdmin ? adminNavItems : guestNavItems;
+
+  async function handleLogout() {
+    await fetch("/portal/auth/logout", { method: "POST" });
+    router.push("/");
+    router.refresh();
+  }
 
   return (
     <header
@@ -35,29 +53,30 @@ export function Navigation() {
     >
       <div className="max-w-screen-2xl mx-auto px-6">
         <div className="flex items-center h-14 gap-8">
-          {/* Brand */}
           <Link href="/" className="flex items-center gap-2 shrink-0">
             <div
               className="w-7 h-7 rounded flex items-center justify-center"
-              style={{ backgroundColor: "var(--color-accent-glow)", border: "1px solid var(--color-accent)" }}
+              style={{
+                backgroundColor: "var(--color-accent-glow)",
+                border: "1px solid var(--color-accent)",
+              }}
             >
-              <Globe
-                size={14}
-                style={{ color: "var(--color-accent)" }}
-              />
+              <Globe size={14} style={{ color: "var(--color-accent)" }} />
             </div>
             <span
               className="text-sm font-semibold tracking-widest uppercase"
-              style={{ color: "var(--color-text-primary)", fontFamily: "var(--font-mono)", letterSpacing: "0.18em" }}
+              style={{
+                color: "var(--color-text-primary)",
+                fontFamily: "var(--font-mono)",
+                letterSpacing: "0.18em",
+              }}
             >
               Travel Portal
             </span>
           </Link>
 
-          {/* Divider */}
           <div className="w-px h-5" style={{ backgroundColor: "var(--color-border)" }} />
 
-          {/* Nav Links */}
           <nav className="flex items-center gap-1 flex-1">
             {navItems.map(({ href, label, icon: Icon }) => {
               const isActive = pathname === href;
@@ -71,11 +90,7 @@ export function Navigation() {
                       ? "text-[var(--color-accent)]"
                       : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
                   )}
-                  style={
-                    isActive
-                      ? { backgroundColor: "var(--color-accent-glow)" }
-                      : {}
-                  }
+                  style={isActive ? { backgroundColor: "var(--color-accent-glow)" } : {}}
                 >
                   <Icon size={13} />
                   {label}
@@ -84,48 +99,77 @@ export function Navigation() {
             })}
           </nav>
 
-          {/* Right side */}
-          <div className="flex items-center gap-3">
-            <button
-              className="relative w-7 h-7 flex items-center justify-center rounded transition-colors"
-              style={{ color: "var(--color-text-secondary)" }}
-              aria-label="Notifications"
-            >
-              <Bell size={14} />
-              <span
-                className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full"
-                style={{ backgroundColor: "var(--color-accent)" }}
-              />
-            </button>
-            <Link
-              href="/settings"
-              className="w-7 h-7 flex items-center justify-center rounded transition-colors"
-              style={{ color: "var(--color-text-secondary)" }}
-            >
-              <Settings size={14} />
-            </Link>
-            <div
-              className="flex items-center gap-2 pl-3 border-l"
-              style={{ borderColor: "var(--color-border)" }}
-            >
+          {isAdmin ? (
+            <div className="flex items-center gap-3">
+              <button
+                className="relative w-7 h-7 flex items-center justify-center rounded transition-colors"
+                style={{ color: "var(--color-text-secondary)" }}
+                aria-label="Notifications"
+              >
+                <Bell size={14} />
+                <span
+                  className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full"
+                  style={{ backgroundColor: "var(--color-accent)" }}
+                />
+              </button>
+              <Link
+                href="/settings"
+                className="w-7 h-7 flex items-center justify-center rounded transition-colors"
+                style={{ color: "var(--color-text-secondary)" }}
+              >
+                <Settings size={14} />
+              </Link>
               <div
-                className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
-                style={{
-                  backgroundColor: "var(--color-accent-glow)",
-                  color: "var(--color-accent)",
-                  border: "1px solid var(--color-accent)",
-                }}
+                className="flex items-center gap-2 pl-3 border-l"
+                style={{ borderColor: "var(--color-border)" }}
               >
-                A
+                <div
+                  className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
+                  style={{
+                    backgroundColor: "var(--color-accent-glow)",
+                    color: "var(--color-accent)",
+                    border: "1px solid var(--color-accent)",
+                  }}
+                >
+                  A
+                </div>
+                <span
+                  className="text-xs hidden sm:block"
+                  style={{
+                    color: "var(--color-text-secondary)",
+                    fontFamily: "var(--font-mono)",
+                  }}
+                >
+                  admin
+                </span>
+                <button
+                  onClick={() => void handleLogout()}
+                  title="Sign out"
+                  className="w-6 h-6 flex items-center justify-center rounded transition-colors hover:text-[var(--color-danger)]"
+                  style={{ color: "var(--color-text-muted)" }}
+                >
+                  <LogOut size={13} />
+                </button>
               </div>
-              <span
-                className="text-xs hidden sm:block"
-                style={{ color: "var(--color-text-secondary)", fontFamily: "var(--font-mono)" }}
-              >
-                admin
-              </span>
             </div>
-          </div>
+          ) : (
+            <Link
+              href="/login"
+              style={{
+                padding: "5px 14px",
+                border: "1px solid var(--color-border)",
+                borderRadius: "4px",
+                color: "var(--color-text-secondary)",
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.65rem",
+                letterSpacing: "0.08em",
+                textDecoration: "none",
+                transition: "border-color 0.15s",
+              }}
+            >
+              STAFF LOGIN
+            </Link>
+          )}
         </div>
       </div>
     </header>
