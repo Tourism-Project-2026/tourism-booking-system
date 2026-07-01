@@ -1,12 +1,13 @@
 ---
-name: Next.js standalone server.js path in pnpm monorepo
-description: In a monorepo, Next.js standalone output nests server.js at the full workspace path, not at the standalone root
+name: Next.js standalone server.js path and static assets in pnpm monorepo
+description: In a monorepo, Next.js standalone output nests server.js at the full workspace path and requires manual copying of static/public files
 ---
 
-# Next.js standalone server.js path in pnpm monorepo
+# Next.js standalone in pnpm monorepo — two critical issues
 
-## The rule
-When `output: "standalone"` is set in `next.config.ts` and the app lives inside a monorepo subdirectory (e.g. `artifacts/travel-agency/`), Next.js mirrors the full workspace path inside the standalone output directory.
+## Issue 1: server.js path is nested at the full workspace path
+
+When `output: "standalone"` is set and the app lives at `artifacts/travel-agency/`, Next.js mirrors the full workspace path inside the standalone output directory.
 
 **Wrong** (flat assumption):
 ```
@@ -18,11 +19,29 @@ artifacts/travel-agency/.next/standalone/server.js
 artifacts/travel-agency/.next/standalone/artifacts/travel-agency/server.js
 ```
 
+Find the real path after any build with:
+```bash
+find artifacts/travel-agency/.next/standalone -name "server.js" | grep -v node_modules
+```
+
+## Issue 2: Static and public files must be manually copied into standalone
+
+Next.js does NOT automatically include `.next/static/` or `public/` in the standalone output. The standalone server looks for them **relative to server.js**, so they must be copied there after the build.
+
+`package.json` `build:prod` script (runs from `artifacts/travel-agency/`):
+```
+"build:prod": "next build && cp -r .next/static .next/standalone/artifacts/travel-agency/.next/static && cp -r public .next/standalone/artifacts/travel-agency/public"
+```
+
+`artifact.toml` must reference `build:prod`, not `build`:
+```toml
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/travel-agency", "run", "build:prod" ]
+run = "node artifacts/travel-agency/.next/standalone/artifacts/travel-agency/server.js"
+```
+
 ## Why
-Next.js standalone traces the app from the workspace root. The output directory structure reflects the absolute path of the app within the project, so `server.js` ends up at `<standalone>/<relative-path-to-app>/server.js`.
+Replit's autoscale deployment removes gitignored files from the container image after the build step. Additionally, Next.js standalone does not self-contain static assets. Both issues together cause the deployed app to have no CSS/JS.
 
 ## How to apply
-When setting `artifact.toml` production `run` command for a Next.js app in this monorepo:
-- Find the actual path with: `find artifacts/travel-agency/.next/standalone -name "server.js" | grep -v node_modules`
-- Use that full path in the `run` command
-- Pattern: `node artifacts/<name>/.next/standalone/artifacts/<name>/server.js`
+Any time a new Next.js app is added to this monorepo with `output: "standalone"`, apply both fixes above before the first publish.
