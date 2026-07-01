@@ -90,6 +90,11 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/portal/clients/[id]/route.js"
+    ],
+    "/portal/auth/me/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/portal/auth/me/route.js"
     ]
   }
 }
