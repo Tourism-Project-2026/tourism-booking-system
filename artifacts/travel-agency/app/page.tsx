@@ -6,31 +6,18 @@ export const metadata = {
 
 export default function DashboardPage() {
   return (
-    <div className="flex flex-col items-center pt-12 pb-16">
+    <div className="flex flex-col items-center pt-24 pb-16">
       {/*
         Single max-w-xl column — everything inside shares the same width,
         so heading text and form are inherently aligned.
       */}
       <div className="w-full max-w-xl flex flex-col items-center text-center">
 
-        {/* Brand label */}
-        <p
-          className="text-xs font-bold uppercase"
-          style={{
-            color: "var(--color-accent)",
-            fontFamily: "var(--font-mono)",
-            letterSpacing: "0.35em",
-            marginBottom: "1.25rem",
-          }}
-        >
-          Travel Portal
-        </p>
-
-        {/* Main heading — one size down from before so it sits proportionally */}
+        {/* Main heading */}
         <h1
           className="text-3xl font-semibold tracking-tight leading-tight"
           style={{
-            color: "var(--color-text-primary)",
+            color: "var(--color-accent)",
             marginBottom: "1.25rem",
           }}
         >
