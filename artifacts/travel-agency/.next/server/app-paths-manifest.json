@@ -1,3 +1,10 @@
 {
-  "/login/page": "app/login/page.js"
+  "/portal/bookings/route": "app/portal/bookings/route.js",
+  "/portal/admin/sync-clients/route": "app/portal/admin/sync-clients/route.js",
+  "/portal/clients/route": "app/portal/clients/route.js",
+  "/page": "app/page.js",
+  "/bookings/page": "app/bookings/page.js",
+  "/analytics/page": "app/analytics/page.js",
+  "/trips/page": "app/trips/page.js",
+  "/clients/page": "app/clients/page.js"
 }

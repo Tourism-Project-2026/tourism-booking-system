@@ -8,7 +8,6 @@ interface BookingFormData {
   phone: string;
   destination_description: string;
   trip_period: string;
-  notes: string;
 }
 
 interface FieldProps {
@@ -16,13 +15,10 @@ interface FieldProps {
   id: string;
   value: string;
   onChange: (v: string) => void;
-  onInteract?: () => void;
   placeholder?: string;
   required?: boolean;
   disabled?: boolean;
   type?: string;
-  pattern?: string;
-  title?: string;
 }
 
 function Field({
@@ -30,24 +26,21 @@ function Field({
   id,
   value,
   onChange,
-  onInteract,
   placeholder = "",
   required = false,
   disabled = false,
   type = "text",
-  pattern,
-  title,
 }: FieldProps) {
   return (
     <div className="flex flex-col gap-1.5">
       <label
         htmlFor={id}
+        className="text-xs font-medium uppercase tracking-widest"
         style={{
           color: "var(--color-text-muted)",
           fontFamily: "var(--font-mono)",
           fontSize: "0.65rem",
           letterSpacing: "0.12em",
-          textTransform: "uppercase",
         }}
       >
         {label}
@@ -61,15 +54,10 @@ function Field({
         id={id}
         type={type}
         value={value}
-        onChange={(e) => {
-          onChange(e.target.value);
-          onInteract?.();
-        }}
+        onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         required={required}
         disabled={disabled}
-        pattern={pattern}
-        title={title}
         className="w-full rounded px-3 py-2 text-sm outline-none transition-all duration-150"
         style={{
           backgroundColor: "var(--color-surface-raised)",
@@ -78,74 +66,6 @@ function Field({
           fontFamily: "var(--font-sans)",
         }}
         onFocus={(e) => {
-          onInteract?.();
-          e.currentTarget.style.borderColor = "var(--color-accent)";
-          e.currentTarget.style.boxShadow = "0 0 0 2px var(--color-accent-glow)";
-        }}
-        onBlur={(e) => {
-          e.currentTarget.style.borderColor = "var(--color-border)";
-          e.currentTarget.style.boxShadow = "none";
-        }}
-      />
-    </div>
-  );
-}
-
-interface TextareaFieldProps {
-  label: string;
-  id: string;
-  value: string;
-  onChange: (v: string) => void;
-  onInteract?: () => void;
-  placeholder?: string;
-  disabled?: boolean;
-  rows?: number;
-}
-
-function TextareaField({
-  label,
-  id,
-  value,
-  onChange,
-  onInteract,
-  placeholder = "",
-  disabled = false,
-  rows = 3,
-}: TextareaFieldProps) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <label
-        htmlFor={id}
-        style={{
-          color: "var(--color-text-muted)",
-          fontFamily: "var(--font-mono)",
-          fontSize: "0.65rem",
-          letterSpacing: "0.12em",
-          textTransform: "uppercase",
-        }}
-      >
-        {label}
-      </label>
-      <textarea
-        id={id}
-        rows={rows}
-        value={value}
-        onChange={(e) => {
-          onChange(e.target.value);
-          onInteract?.();
-        }}
-        placeholder={placeholder}
-        disabled={disabled}
-        className="w-full rounded px-3 py-2 text-sm outline-none transition-all duration-150 resize-none"
-        style={{
-          backgroundColor: "var(--color-surface-raised)",
-          border: "1px solid var(--color-border)",
-          color: "var(--color-text-primary)",
-          fontFamily: "var(--font-sans)",
-          lineHeight: 1.6,
-        }}
-        onFocus={(e) => {
-          onInteract?.();
           e.currentTarget.style.borderColor = "var(--color-accent)";
           e.currentTarget.style.boxShadow = "0 0 0 2px var(--color-accent-glow)";
         }}
@@ -165,16 +85,13 @@ interface BookingFormProps {
   className?: string;
 }
 
-const EMPTY_FORM: BookingFormData = {
-  client_name: "",
-  phone: "",
-  destination_description: "",
-  trip_period: "",
-  notes: "",
-};
-
 export function BookingForm({ onSuccess, className }: BookingFormProps) {
-  const [form, setForm] = useState<BookingFormData>(EMPTY_FORM);
+  const [form, setForm] = useState<BookingFormData>({
+    client_name: "",
+    phone: "",
+    destination_description: "",
+    trip_period: "",
+  });
   const [state, setState] = useState<FormState>("idle");
   const [errorMsg, setErrorMsg] = useState<string>("");
 
@@ -182,13 +99,8 @@ export function BookingForm({ onSuccess, className }: BookingFormProps) {
     return (value: string) => setForm((prev) => ({ ...prev, [key]: value }));
   }
 
-  function dismissSuccess() {
-    if (state === "success") setState("idle");
-  }
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (state === "submitting") return;
     setState("submitting");
     setErrorMsg("");
 
@@ -209,8 +121,10 @@ export function BookingForm({ onSuccess, className }: BookingFormProps) {
       }
 
       setState("success");
-      setForm(EMPTY_FORM);
+      setForm({ client_name: "", phone: "", destination_description: "", trip_period: "" });
       onSuccess?.();
+
+      setTimeout(() => setState("idle"), 3000);
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : "Submission failed");
       setState("error");
@@ -218,12 +132,6 @@ export function BookingForm({ onSuccess, className }: BookingFormProps) {
   }
 
   const isSubmitting = state === "submitting";
-  const canSubmit =
-    !isSubmitting &&
-    form.client_name.trim() !== "" &&
-    form.phone.trim() !== "" &&
-    form.destination_description.trim() !== "" &&
-    form.trip_period.trim() !== "";
 
   return (
     <div
@@ -253,7 +161,7 @@ export function BookingForm({ onSuccess, className }: BookingFormProps) {
         </p>
       </div>
 
-      {/* Success banner — stays until user interacts with the form */}
+      {/* Success banner */}
       {state === "success" && (
         <div
           className="mb-4 flex items-center gap-2 rounded px-3 py-2 text-xs"
@@ -264,7 +172,7 @@ export function BookingForm({ onSuccess, className }: BookingFormProps) {
           }}
         >
           <span style={{ fontFamily: "var(--font-mono)" }}>✓</span>
-          Booking submitted — your team will be in touch within 24 hours.
+          Booking submitted successfully.
         </div>
       )}
 
@@ -279,17 +187,16 @@ export function BookingForm({ onSuccess, className }: BookingFormProps) {
           }}
         >
           <span style={{ fontFamily: "var(--font-mono)" }}>✕</span>
-          {errorMsg || "Something went wrong. Please try again."}
+          {errorMsg || "Something went wrong."}
         </div>
       )}
 
-      <form onSubmit={(e) => void handleSubmit(e)} noValidate className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <Field
           id="client_name"
           label="Name"
           value={form.client_name}
           onChange={setField("client_name")}
-          onInteract={dismissSuccess}
           placeholder="Full name"
           required
           disabled={isSubmitting}
@@ -300,21 +207,15 @@ export function BookingForm({ onSuccess, className }: BookingFormProps) {
           type="tel"
           value={form.phone}
           onChange={setField("phone")}
-          onInteract={dismissSuccess}
-          placeholder="e.g. +374 91 000000"
-          required
+          placeholder="+1 555 000 0000"
           disabled={isSubmitting}
-          pattern="[0-9+\-\s()]+"
-          title="Enter a valid international phone number"
         />
         <Field
           id="destination_description"
           label="Destination"
           value={form.destination_description}
           onChange={setField("destination_description")}
-          onInteract={dismissSuccess}
           placeholder="e.g. Santorini, Greece"
-          required
           disabled={isSubmitting}
         />
         <Field
@@ -322,20 +223,8 @@ export function BookingForm({ onSuccess, className }: BookingFormProps) {
           label="Trip Period"
           value={form.trip_period}
           onChange={setField("trip_period")}
-          onInteract={dismissSuccess}
           placeholder="e.g. Aug 14 – Aug 24, 2025"
-          required
           disabled={isSubmitting}
-        />
-        <TextareaField
-          id="notes"
-          label="Notes (optional)"
-          value={form.notes}
-          onChange={setField("notes")}
-          onInteract={dismissSuccess}
-          placeholder="Special requests, dietary requirements, accessibility needs…"
-          disabled={isSubmitting}
-          rows={3}
         />
 
         {/* Divider */}
@@ -346,31 +235,28 @@ export function BookingForm({ onSuccess, className }: BookingFormProps) {
 
         <button
           type="submit"
-          disabled={!canSubmit}
+          disabled={isSubmitting || !form.client_name.trim()}
           className="w-full rounded px-4 py-2 text-xs font-semibold uppercase tracking-widest transition-all duration-150"
           style={{
-            backgroundColor: canSubmit ? "var(--color-accent)" : "var(--color-surface-raised)",
-            color: canSubmit ? "#000" : "var(--color-text-muted)",
+            backgroundColor:
+              isSubmitting || !form.client_name.trim()
+                ? "var(--color-surface-raised)"
+                : "var(--color-accent)",
+            color:
+              isSubmitting || !form.client_name.trim()
+                ? "var(--color-text-muted)"
+                : "#000",
             fontFamily: "var(--font-mono)",
             letterSpacing: "0.12em",
-            cursor: canSubmit ? "pointer" : "not-allowed",
+            cursor:
+              isSubmitting || !form.client_name.trim()
+                ? "not-allowed"
+                : "pointer",
             border: "none",
           }}
         >
-          {isSubmitting ? "Sending…" : "Submit"}
+          {isSubmitting ? "Submitting…" : "Submit"}
         </button>
-
-        <p
-          style={{
-            fontSize: "0.62rem",
-            color: "var(--color-text-muted)",
-            fontFamily: "var(--font-mono)",
-            textAlign: "center",
-            marginTop: "-8px",
-          }}
-        >
-          Fields marked <span style={{ color: "var(--color-accent)" }}>*</span> are required
-        </p>
       </form>
     </div>
   );
