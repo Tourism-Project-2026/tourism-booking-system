@@ -65,7 +65,6 @@ function Field({
           onChange(e.target.value);
           onInteract?.();
         }}
-        onFocus={onInteract}
         placeholder={placeholder}
         required={required}
         disabled={disabled}

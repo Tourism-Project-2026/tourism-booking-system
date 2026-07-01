@@ -22,7 +22,8 @@ const PROTECTED_PAGE_PREFIXES = [
  * must be reachable before a session exists.
  */
 function isPublicPortalPath(req: NextRequest): boolean {
-  const { pathname, method } = req.nextUrl;
+  const { pathname } = req.nextUrl;
+  const { method } = req;
   // Public booking form submission
   if (pathname === "/portal/bookings" && method === "POST") return true;
   // Auth helpers (login / logout)
