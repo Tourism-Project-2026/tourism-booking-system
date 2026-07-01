@@ -1,47 +1,35 @@
-import { Pool } from "pg";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 
-let pool: Pool | null = null;
-
-export function getDb(): Pool {
-  if (!pool) {
-    const connectionString = process.env.DATABASE_URL;
-    if (!connectionString) {
-      throw new Error(
-        "DATABASE_URL environment variable is not set. " +
-          "Provision a PostgreSQL database and set DATABASE_URL to connect."
-      );
-    }
-    pool = new Pool({
-      connectionString,
-      ssl:
-        process.env.NODE_ENV === "production"
-          ? { rejectUnauthorized: false }
-          : false,
-      max: 10,
-      idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 5000,
-    });
-
-    pool.on("error", (err) => {
-      console.error("Unexpected PostgreSQL pool error:", err);
-    });
+function createClient() {
+  const url = process.env.DATABASE_URL;
+  if (!url) {
+    throw new Error(
+      "DATABASE_URL is not set. Add it to your project Secrets to connect to PostgreSQL."
+    );
   }
-  return pool;
+  return postgres(url, {
+    ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
+    max: 10,
+    idle_timeout: 30,
+    connect_timeout: 10,
+    onnotice: () => {},
+  });
 }
 
-export async function query<T = Record<string, unknown>>(
-  sql: string,
-  params?: unknown[]
-): Promise<T[]> {
-  const db = getDb();
-  const result = await db.query(sql, params);
-  return result.rows as T[];
+let _client: ReturnType<typeof postgres> | null = null;
+let _db: ReturnType<typeof drizzle> | null = null;
+
+export function getDb() {
+  if (!_db) {
+    _client = createClient();
+    _db = drizzle(_client);
+  }
+  return _db;
 }
 
-export async function queryOne<T = Record<string, unknown>>(
-  sql: string,
-  params?: unknown[]
-): Promise<T | null> {
-  const rows = await query<T>(sql, params);
-  return rows[0] ?? null;
-}
+export const db = new Proxy({} as ReturnType<typeof drizzle>, {
+  get(_target, prop) {
+    return getDb()[prop as keyof ReturnType<typeof drizzle>];
+  },
+});

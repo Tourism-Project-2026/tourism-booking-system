@@ -3,7 +3,7 @@
 
 type AppRoutes = "/"
 type AppRouteHandlerRoutes = "/api/analytics" | "/api/bookings" | "/api/clients" | "/api/trips"
-type PageRoutes = "/not-found"
+type PageRoutes = never
 type LayoutRoutes = "/"
 type RedirectRoutes = never
 type RewriteRoutes = never
@@ -16,7 +16,6 @@ interface ParamMap {
   "/api/bookings": {}
   "/api/clients": {}
   "/api/trips": {}
-  "/not-found": {}
 }
 
 
