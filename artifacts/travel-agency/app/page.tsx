@@ -6,7 +6,7 @@ export const metadata = {
 
 export default function DashboardPage() {
   return (
-    <div className="flex flex-col items-center pb-16" style={{ paddingTop: "6rem" }}>
+    <div className="flex flex-col items-center pb-16" style={{ paddingTop: "3rem" }}>
       {/*
         Single max-w-xl column — everything inside shares the same width,
         so heading text and form are inherently aligned.

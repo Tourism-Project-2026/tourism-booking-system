@@ -77,7 +77,7 @@ export function Navigation({ isAdmin }: NavigationProps) {
 
           <div className="w-px h-5" style={{ backgroundColor: "var(--color-border)" }} />
 
-          <nav className="flex items-center gap-1 flex-1">
+          <nav className="flex items-center gap-6 flex-1">
             {navItems.map(({ href, label, icon: Icon }) => {
               const isActive = pathname === href;
               return (
