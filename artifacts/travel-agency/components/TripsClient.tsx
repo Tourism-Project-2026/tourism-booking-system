@@ -3,6 +3,8 @@
 import { useEffect, useState, useCallback } from "react";
 import type { Trip } from "@/db/schema";
 
+const STATUS_ORDER: Record<string, number> = { Active: 0, Upcoming: 1, Completed: 2 };
+
 const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
   Upcoming: { bg: "rgba(245,158,11,0.12)", text: "var(--color-warning)" },
   Active: { bg: "rgba(16,185,129,0.12)", text: "var(--color-success)" },
@@ -388,7 +390,7 @@ export function TripsClient({ isAdmin }: TripsClientProps) {
             gap: "1rem",
           }}
         >
-          {tripsList.map((trip) => {
+          {[...tripsList].sort((a, b) => (STATUS_ORDER[a.status] ?? 9) - (STATUS_ORDER[b.status] ?? 9)).map((trip) => {
             const colors =
               STATUS_COLORS[trip.status] ?? STATUS_COLORS["Upcoming"];
             return (
