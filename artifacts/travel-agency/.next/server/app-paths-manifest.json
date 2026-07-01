@@ -1,7 +1,8 @@
 {
-  "/analytics/page": "app/analytics/page.js",
-  "/page": "app/page.js",
-  "/clients/page": "app/clients/page.js",
+  "/portal/bookings/route": "app/portal/bookings/route.js",
   "/bookings/page": "app/bookings/page.js",
-  "/trips/page": "app/trips/page.js"
+  "/trips/page": "app/trips/page.js",
+  "/clients/page": "app/clients/page.js",
+  "/analytics/page": "app/analytics/page.js",
+  "/login/page": "app/login/page.js"
 }
