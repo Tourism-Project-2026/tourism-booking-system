@@ -13,36 +13,28 @@ export default function DashboardPage() {
       */}
       <div className="w-full max-w-xl flex flex-col items-center text-center">
 
-        {/* Brand label */}
-        <p
-          className="text-xs font-bold uppercase"
+        {/* Main heading */}
+        <h1
+          className="font-bold tracking-tight"
           style={{
             color: "var(--color-accent)",
-            fontFamily: "var(--font-mono)",
-            letterSpacing: "0.35em",
-            marginBottom: "1.25rem",
-          }}
-        >
-          Travel Portal
-        </p>
-
-        {/* Main heading — one size down from before so it sits proportionally */}
-        <h1
-          className="text-3xl font-semibold tracking-tight leading-tight"
-          style={{
-            color: "var(--color-text-primary)",
-            marginBottom: "1.25rem",
+            fontSize: "clamp(1.2rem, 3vw, 2rem)",
+            whiteSpace: "nowrap",
+            marginTop: "40px",
+            marginBottom: "20px",
+            lineHeight: 1.2,
           }}
         >
           Your Gateway to Unforgettable Journeys
         </h1>
 
-        {/* Description — muted, relaxed line-height */}
+        {/* Description */}
         <p
-          className="text-sm leading-relaxed"
+          className="text-sm"
           style={{
             color: "var(--color-text-muted)",
-            marginBottom: "2.5rem",
+            lineHeight: 1.5,
+            marginBottom: "2rem",
           }}
         >
           Fill in the details below, and our team will review your request and
