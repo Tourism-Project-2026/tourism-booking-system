@@ -17,20 +17,21 @@ export default function DashboardPage() {
             letterSpacing: "0.2em",
           }}
         >
-          Horizon Travel
+          Travel Portal
         </p>
         <h1
           className="text-2xl font-semibold tracking-tight"
           style={{ color: "var(--color-text-primary)" }}
         >
-          Request a Booking
+          Your Gateway to Unforgettable Journeys
         </h1>
         <p
-          className="mt-2 text-sm"
+          className="mt-2 text-sm leading-relaxed"
           style={{ color: "var(--color-text-secondary)" }}
         >
-          Fill in the details below and our team will confirm your trip within
-          24 hours.
+          Fill in the details below, and our team will review your request and
+          confirm your trip within 24 hours. We are here to make your travel
+          planning seamless and stress-free.
         </p>
       </div>
 

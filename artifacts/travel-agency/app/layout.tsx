@@ -4,10 +4,10 @@ import { Navigation } from "@/components/Navigation";
 
 export const metadata: Metadata = {
   title: {
-    default: "Horizon Travel — Agency Dashboard",
-    template: "%s | Horizon Travel",
+    default: "Travel Portal — Agency Dashboard",
+    template: "%s | Travel Portal",
   },
-  description: "Internal operations dashboard for Horizon Travel Agency.",
+  description: "Your gateway to unforgettable journeys.",
 };
 
 export default function RootLayout({
@@ -32,7 +32,7 @@ export default function RootLayout({
           >
             <div className="max-w-screen-2xl mx-auto flex items-center justify-between">
               <span style={{ fontFamily: "var(--font-mono)" }}>
-                HORIZON/TRAVEL v0.1.0
+                TRAVEL/PORTAL v0.1.0
               </span>
               <span>
                 {new Date().getFullYear()} &mdash; Internal Use Only

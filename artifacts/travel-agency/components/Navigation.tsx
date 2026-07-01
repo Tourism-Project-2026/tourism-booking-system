@@ -50,7 +50,7 @@ export function Navigation() {
               className="text-sm font-semibold tracking-widest uppercase"
               style={{ color: "var(--color-text-primary)", fontFamily: "var(--font-mono)", letterSpacing: "0.18em" }}
             >
-              Horizon
+              Travel Portal
             </span>
           </Link>
 
