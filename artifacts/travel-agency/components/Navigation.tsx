@@ -100,58 +100,31 @@ export function Navigation({ isAdmin }: NavigationProps) {
           </nav>
 
           {isAdmin ? (
-            <div className="flex items-center gap-3">
-              <button
-                className="relative w-7 h-7 flex items-center justify-center rounded transition-colors"
-                style={{ color: "var(--color-text-secondary)" }}
-                aria-label="Notifications"
-              >
-                <Bell size={14} />
-                <span
-                  className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full"
-                  style={{ backgroundColor: "var(--color-accent)" }}
-                />
-              </button>
-              <Link
-                href="/settings"
-                className="w-7 h-7 flex items-center justify-center rounded transition-colors"
-                style={{ color: "var(--color-text-secondary)" }}
-              >
-                <Settings size={14} />
-              </Link>
-              <div
-                className="flex items-center gap-2 pl-3 border-l"
-                style={{ borderColor: "var(--color-border)" }}
-              >
-                <div
-                  className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
-                  style={{
-                    backgroundColor: "var(--color-accent-glow)",
-                    color: "var(--color-accent)",
-                    border: "1px solid var(--color-accent)",
-                  }}
-                >
-                  A
-                </div>
-                <span
-                  className="text-xs hidden sm:block"
-                  style={{
-                    color: "var(--color-text-secondary)",
-                    fontFamily: "var(--font-mono)",
-                  }}
-                >
-                  admin
-                </span>
-                <button
-                  onClick={() => void handleLogout()}
-                  title="Sign out"
-                  className="w-6 h-6 flex items-center justify-center rounded transition-colors hover:text-[var(--color-danger)]"
-                  style={{ color: "var(--color-text-muted)" }}
-                >
-                  <LogOut size={13} />
-                </button>
-              </div>
-            </div>
+            <button
+              onClick={() => void handleLogout()}
+              style={{
+                padding: "5px 16px",
+                background: "transparent",
+                border: "1px solid var(--color-border)",
+                borderRadius: "4px",
+                color: "var(--color-text-secondary)",
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.65rem",
+                letterSpacing: "0.1em",
+                cursor: "pointer",
+                transition: "border-color 0.15s, color 0.15s",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--color-danger)";
+                (e.currentTarget as HTMLButtonElement).style.color = "var(--color-danger)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--color-border)";
+                (e.currentTarget as HTMLButtonElement).style.color = "var(--color-text-secondary)";
+              }}
+            >
+              LOGOUT
+            </button>
           ) : null}
         </div>
       </div>
