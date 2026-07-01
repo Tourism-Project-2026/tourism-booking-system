@@ -55,6 +55,21 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/portal/admin/sync-clients/route.js"
+    ],
+    "/portal/bookings/[id]/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/portal/bookings/[id]/route.js"
+    ],
+    "/portal/trips/[id]/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/portal/trips/[id]/route.js"
+    ],
+    "/portal/clients/[id]/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/portal/clients/[id]/route.js"
     ]
   }
 }

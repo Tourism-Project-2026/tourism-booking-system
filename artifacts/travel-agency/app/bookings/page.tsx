@@ -25,6 +25,7 @@ function StatusBadge({ status }: { status: string }) {
         letterSpacing: "0.08em",
         padding: "2px 8px",
         borderRadius: "3px",
+        whiteSpace: "nowrap",
       }}
     >
       {status.toUpperCase()}
@@ -65,12 +66,7 @@ function StatusDropdown({
       <button
         onClick={() => setOpen((v) => !v)}
         disabled={loading}
-        style={{
-          background: "none",
-          border: "none",
-          cursor: loading ? "wait" : "pointer",
-          padding: 0,
-        }}
+        style={{ background: "none", border: "none", cursor: loading ? "wait" : "pointer", padding: 0 }}
       >
         <StatusBadge status={current} />
       </button>
@@ -92,7 +88,7 @@ function StatusDropdown({
           {STATUSES.map((s) => (
             <button
               key={s}
-              onClick={() => select(s)}
+              onClick={() => void select(s)}
               style={{
                 display: "block",
                 width: "100%",
@@ -113,6 +109,90 @@ function StatusDropdown({
         </div>
       )}
     </div>
+  );
+}
+
+function DeleteButton({ id, onDelete }: { id: number; onDelete: (id: number) => void }) {
+  const [confirming, setConfirming] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  async function doDelete() {
+    setDeleting(true);
+    try {
+      const res = await fetch(`/portal/bookings/${id}`, { method: "DELETE" });
+      if (res.ok) onDelete(id);
+    } finally {
+      setDeleting(false);
+      setConfirming(false);
+    }
+  }
+
+  if (confirming) {
+    return (
+      <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
+        <button
+          onClick={() => void doDelete()}
+          disabled={deleting}
+          style={{
+            padding: "2px 8px",
+            background: "rgba(239,68,68,0.15)",
+            border: "1px solid rgba(239,68,68,0.4)",
+            borderRadius: "3px",
+            color: "var(--color-danger)",
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.62rem",
+            cursor: deleting ? "wait" : "pointer",
+          }}
+        >
+          {deleting ? "…" : "YES"}
+        </button>
+        <button
+          onClick={() => setConfirming(false)}
+          style={{
+            padding: "2px 8px",
+            background: "none",
+            border: "1px solid var(--color-border)",
+            borderRadius: "3px",
+            color: "var(--color-text-muted)",
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.62rem",
+            cursor: "pointer",
+          }}
+        >
+          NO
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <button
+      onClick={() => setConfirming(true)}
+      title="Delete booking"
+      style={{
+        background: "none",
+        border: "1px solid transparent",
+        borderRadius: "4px",
+        color: "var(--color-text-muted)",
+        cursor: "pointer",
+        padding: "2px 6px",
+        fontSize: "0.8rem",
+        lineHeight: 1,
+        transition: "all 0.15s",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.color = "var(--color-danger)";
+        e.currentTarget.style.borderColor = "rgba(239,68,68,0.3)";
+        e.currentTarget.style.background = "rgba(239,68,68,0.08)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.color = "var(--color-text-muted)";
+        e.currentTarget.style.borderColor = "transparent";
+        e.currentTarget.style.background = "none";
+      }}
+    >
+      ✕
+    </button>
   );
 }
 
@@ -140,18 +220,19 @@ export default function BookingsPage() {
   useEffect(() => { void load(); }, [load]);
 
   function handleStatusUpdate(id: number, status: string) {
-    setBookingsList((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, status } : b))
-    );
+    setBookingsList((prev) => prev.map((b) => (b.id === id ? { ...b, status } : b)));
+  }
+
+  function handleDelete(id: number) {
+    setBookingsList((prev) => prev.filter((b) => b.id !== id));
   }
 
   const filtered = filter === "All" ? bookingsList : bookingsList.filter((b) => b.status === filter);
-
   const counts: Record<string, number> = { All: bookingsList.length };
   for (const s of STATUSES) counts[s] = bookingsList.filter((b) => b.status === s).length;
 
   return (
-    <div style={{ padding: "2rem 2.5rem", maxWidth: "1280px", margin: "0 auto" }}>
+    <div style={{ padding: "2rem 2.5rem", maxWidth: "1400px", margin: "0 auto" }}>
       <div style={{ marginBottom: "2rem" }}>
         <p style={{ color: "var(--color-accent)", fontFamily: "var(--font-mono)", fontSize: "0.65rem", letterSpacing: "0.3em", textTransform: "uppercase", marginBottom: "0.5rem" }}>
           Admin &rsaquo; Bookings
@@ -160,11 +241,11 @@ export default function BookingsPage() {
           All Bookings
         </h1>
         <p style={{ color: "var(--color-text-secondary)", fontSize: "0.82rem", marginTop: "0.25rem" }}>
-          {bookingsList.length} total &mdash; click a status badge to update it
+          {bookingsList.length} total &mdash; click a status badge to change it, ✕ to delete
         </p>
       </div>
 
-      <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.5rem", flexWrap: "wrap" }}>
+      <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.5rem", flexWrap: "wrap", alignItems: "center" }}>
         {["All", ...STATUSES].map((s) => (
           <button
             key={s}
@@ -181,7 +262,7 @@ export default function BookingsPage() {
               cursor: "pointer",
             }}
           >
-            {s.toUpperCase()} {counts[s] !== undefined && <span style={{ opacity: 0.6 }}>({counts[s]})</span>}
+            {s.toUpperCase()} <span style={{ opacity: 0.6 }}>({counts[s] ?? 0})</span>
           </button>
         ))}
         <button
@@ -202,17 +283,10 @@ export default function BookingsPage() {
         </button>
       </div>
 
-      <div
-        style={{
-          background: "var(--color-surface)",
-          border: "1px solid var(--color-border)",
-          borderRadius: "8px",
-          overflow: "hidden",
-        }}
-      >
+      <div style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)", borderRadius: "8px", overflow: "auto" }}>
         {loading ? (
           <div style={{ padding: "3rem", textAlign: "center", color: "var(--color-text-muted)", fontFamily: "var(--font-mono)", fontSize: "0.75rem" }}>
-            LOADING...
+            LOADING…
           </div>
         ) : error ? (
           <div style={{ padding: "3rem", textAlign: "center", color: "var(--color-danger)", fontFamily: "var(--font-mono)", fontSize: "0.75rem" }}>
@@ -223,22 +297,23 @@ export default function BookingsPage() {
             NO BOOKINGS FOUND
           </div>
         ) : (
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "900px" }}>
             <thead>
               <tr style={{ borderBottom: "1px solid var(--color-border)" }}>
-                {["ID", "Client", "Phone", "Destination", "Trip Period", "Notes", "Status", "Created"].map((h) => (
+                {["#", "Client", "Phone", "Destination", "Period", "Notes", "Status", "Date", ""].map((h) => (
                   <th
                     key={h}
                     style={{
-                      padding: "10px 16px",
+                      padding: "10px 14px",
                       textAlign: "left",
                       fontFamily: "var(--font-mono)",
-                      fontSize: "0.62rem",
+                      fontSize: "0.6rem",
                       letterSpacing: "0.12em",
                       color: "var(--color-text-muted)",
                       textTransform: "uppercase",
                       fontWeight: 500,
                       background: "var(--color-surface-raised)",
+                      whiteSpace: "nowrap",
                     }}
                   >
                     {h}
@@ -255,33 +330,36 @@ export default function BookingsPage() {
                     background: i % 2 === 1 ? "rgba(14,20,25,0.4)" : "none",
                   }}
                 >
-                  <td style={{ padding: "12px 16px", fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: "var(--color-text-muted)" }}>
+                  <td style={{ padding: "11px 14px", fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "var(--color-text-muted)" }}>
                     #{b.id}
                   </td>
-                  <td style={{ padding: "12px 16px", fontSize: "0.82rem", color: "var(--color-text-primary)", fontWeight: 500 }}>
+                  <td style={{ padding: "11px 14px", fontSize: "0.82rem", color: "var(--color-text-primary)", fontWeight: 500, whiteSpace: "nowrap" }}>
                     {b.client_name}
                   </td>
-                  <td style={{ padding: "12px 16px", fontSize: "0.78rem", color: "var(--color-text-secondary)" }}>
+                  <td style={{ padding: "11px 14px", fontSize: "0.78rem", color: "var(--color-text-secondary)", whiteSpace: "nowrap" }}>
                     {b.phone ?? "—"}
                   </td>
-                  <td style={{ padding: "12px 16px", fontSize: "0.78rem", color: "var(--color-text-secondary)", maxWidth: "200px" }}>
+                  <td style={{ padding: "11px 14px", fontSize: "0.78rem", color: "var(--color-text-secondary)", maxWidth: "180px" }}>
                     <span style={{ display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {b.destination_description ?? "—"}
                     </span>
                   </td>
-                  <td style={{ padding: "12px 16px", fontSize: "0.78rem", color: "var(--color-text-secondary)", whiteSpace: "nowrap" }}>
+                  <td style={{ padding: "11px 14px", fontSize: "0.78rem", color: "var(--color-text-secondary)", whiteSpace: "nowrap" }}>
                     {b.trip_period ?? "—"}
                   </td>
-                  <td style={{ padding: "12px 16px", fontSize: "0.75rem", color: "var(--color-text-muted)", maxWidth: "220px" }}>
+                  <td style={{ padding: "11px 14px", fontSize: "0.75rem", color: "var(--color-text-muted)", maxWidth: "160px" }}>
                     <span style={{ display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={b.notes ?? ""}>
                       {b.notes ?? "—"}
                     </span>
                   </td>
-                  <td style={{ padding: "12px 16px" }}>
+                  <td style={{ padding: "11px 14px" }}>
                     <StatusDropdown bookingId={b.id} current={b.status} onUpdate={handleStatusUpdate} />
                   </td>
-                  <td style={{ padding: "12px 16px", fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "var(--color-text-muted)", whiteSpace: "nowrap" }}>
+                  <td style={{ padding: "11px 14px", fontFamily: "var(--font-mono)", fontSize: "0.66rem", color: "var(--color-text-muted)", whiteSpace: "nowrap" }}>
                     {new Date(b.created_at).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
+                  </td>
+                  <td style={{ padding: "11px 10px", textAlign: "center" }}>
+                    <DeleteButton id={b.id} onDelete={handleDelete} />
                   </td>
                 </tr>
               ))}
