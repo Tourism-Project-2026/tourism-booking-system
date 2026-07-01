@@ -98,7 +98,10 @@ export function BookingForm({ onSuccess, className }: BookingFormProps) {
   const [errorMsg, setErrorMsg] = useState<string>("");
 
   function setField(key: keyof BookingFormData) {
-    return (value: string) => setForm((prev) => ({ ...prev, [key]: value }));
+    return (value: string) => {
+      if (state === "success") setState("idle");
+      setForm((prev) => ({ ...prev, [key]: value }));
+    };
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -125,8 +128,6 @@ export function BookingForm({ onSuccess, className }: BookingFormProps) {
       setState("success");
       setForm({ client_name: "", phone: "", destination_description: "", trip_period: "", notes: "" });
       onSuccess?.();
-
-      setTimeout(() => setState("idle"), 3000);
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : "Submission failed");
       setState("error");
