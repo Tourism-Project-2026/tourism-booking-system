@@ -6,6 +6,7 @@ export const bookings = pgTable("bookings", {
   phone: text("phone"),
   destination_description: text("destination_description"),
   trip_period: text("trip_period"),
+  notes: text("notes"),
   status: text("status").default("New").notNull(),
   created_at: timestamp("created_at").defaultNow().notNull(),
 });
