@@ -1,62 +1,52 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { db } from "@/lib/db";
+import { bookings, clients, trips } from "@/db/schema";
+import { sql } from "drizzle-orm";
 
-const MONTHLY_DATA = [
-  { month: "Jan", bookings: 34, revenue: 142000 },
-  { month: "Feb", bookings: 41, revenue: 178000 },
-  { month: "Mar", bookings: 38, revenue: 164000 },
-  { month: "Apr", bookings: 55, revenue: 231000 },
-  { month: "May", bookings: 62, revenue: 284000 },
-  { month: "Jun", bookings: 71, revenue: 318000 },
-  { month: "Jul", bookings: 89, revenue: 412000 },
-  { month: "Aug", bookings: 94, revenue: 445000 },
-  { month: "Sep", bookings: 78, revenue: 356000 },
-  { month: "Oct", bookings: 66, revenue: 298000 },
-  { month: "Nov", bookings: 52, revenue: 236000 },
-  { month: "Dec", bookings: 43, revenue: 198000 },
-];
-
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const { searchParams } = new URL(request.url);
-    const year = parseInt(searchParams.get("year") ?? String(new Date().getFullYear()), 10);
+    const [bookingTotal, clientTotal, tripTotal, statusRows, recentRows] = await Promise.all([
+      db.select({ total: sql<number>`count(*)::int` }).from(bookings),
+      db.select({ total: sql<number>`count(*)::int` }).from(clients),
+      db.select({ total: sql<number>`count(*)::int` }).from(trips),
+      db
+        .select({
+          status: bookings.status,
+          count: sql<number>`count(*)::int`,
+        })
+        .from(bookings)
+        .groupBy(bookings.status),
+      db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(bookings)
+        .where(sql`created_at >= now() - interval '30 days'`),
+    ]);
 
-    const totalBookings = MONTHLY_DATA.reduce((sum, m) => sum + m.bookings, 0);
-    const totalRevenue = MONTHLY_DATA.reduce((sum, m) => sum + m.revenue, 0);
+    const totalBookings = bookingTotal[0]?.total ?? 0;
+    const totalClients = clientTotal[0]?.total ?? 0;
+    const totalTrips = tripTotal[0]?.total ?? 0;
+    const recentBookings = recentRows[0]?.count ?? 0;
 
-    const currentMonth = new Date().getMonth();
-    const prevMonthBookings = MONTHLY_DATA[Math.max(0, currentMonth - 1)]?.bookings ?? 0;
-    const currMonthBookings = MONTHLY_DATA[currentMonth]?.bookings ?? 0;
-    const bookingsTrend =
-      prevMonthBookings > 0
-        ? Math.round(((currMonthBookings - prevMonthBookings) / prevMonthBookings) * 100)
-        : 0;
-
-    const prevMonthRevenue = MONTHLY_DATA[Math.max(0, currentMonth - 1)]?.revenue ?? 0;
-    const currMonthRevenue = MONTHLY_DATA[currentMonth]?.revenue ?? 0;
-    const revenueTrend =
-      prevMonthRevenue > 0
-        ? Math.round(((currMonthRevenue - prevMonthRevenue) / prevMonthRevenue) * 100)
-        : 0;
+    const statusMap: Record<string, number> = {};
+    for (const row of statusRows) {
+      statusMap[row.status] = row.count;
+    }
 
     return NextResponse.json({
-      year,
       stats: {
         totalBookings,
-        totalRevenue,
-        activeTrips: 23,
-        totalClients: 847,
-        bookingsTrend,
-        revenueTrend,
-        tripsTrend: 8,
-        clientsTrend: 14,
+        totalClients,
+        totalTrips,
+        recentBookings,
+        newBookings: statusMap["New"] ?? 0,
+        confirmedBookings: statusMap["Confirmed"] ?? 0,
+        completedBookings: statusMap["Completed"] ?? 0,
+        cancelledBookings: statusMap["Cancelled"] ?? 0,
       },
-      monthly: MONTHLY_DATA,
+      statusBreakdown: statusRows,
     });
   } catch (error) {
-    console.error("[GET /api/analytics]", error);
-    return NextResponse.json(
-      { error: "Failed to fetch analytics" },
-      { status: 500 }
-    );
+    console.error("[GET /portal/analytics]", error);
+    return NextResponse.json({ error: "Failed to fetch analytics" }, { status: 500 });
   }
 }
