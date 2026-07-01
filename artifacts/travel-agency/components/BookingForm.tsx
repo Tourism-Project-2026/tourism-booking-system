@@ -105,15 +105,19 @@ export function BookingForm({ onSuccess, className }: BookingFormProps) {
     setErrorMsg("");
 
     try {
-      const res = await fetch("/api/bookings", {
+      const res = await fetch("/portal/bookings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
 
       if (!res.ok) {
-        const data = await res.json() as { error?: string };
-        throw new Error(data.error ?? `HTTP ${res.status}`);
+        let message = `HTTP ${res.status}`;
+        try {
+          const data = await res.json() as { error?: string };
+          message = data.error ?? message;
+        } catch { /* empty body — use status fallback */ }
+        throw new Error(message);
       }
 
       setState("success");

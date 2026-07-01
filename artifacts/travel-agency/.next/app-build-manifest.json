@@ -11,10 +11,10 @@
       "static/chunks/main-app.js",
       "static/chunks/app/page.js"
     ],
-    "/api/bookings/route": [
+    "/portal/bookings/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/api/bookings/route.js"
+      "static/chunks/app/portal/bookings/route.js"
     ]
   }
 }

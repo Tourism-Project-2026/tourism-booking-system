@@ -62,9 +62,9 @@ export function useDashboard(): DashboardData {
     setError(null);
     try {
       const [analyticsRes, bookingsRes, destinationsRes] = await Promise.all([
-        fetch("/api/analytics"),
-        fetch("/api/bookings?limit=8"),
-        fetch("/api/trips?limit=5"),
+        fetch("/portal/analytics"),
+        fetch("/portal/bookings?limit=8"),
+        fetch("/portal/trips?limit=5"),
       ]);
 
       if (analyticsRes.ok) {
