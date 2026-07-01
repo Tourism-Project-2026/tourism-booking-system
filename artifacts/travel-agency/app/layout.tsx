@@ -33,7 +33,7 @@ export default async function RootLayout({
             {children}
           </main>
           <footer
-            className="px-6 py-3 text-xs border-t"
+            className="mt-16 px-6 py-3 text-xs border-t"
             style={{
               color: "var(--color-text-muted)",
               borderColor: "var(--color-border-subtle)",
