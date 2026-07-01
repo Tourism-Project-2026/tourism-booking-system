@@ -45,6 +45,41 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/login/page.js"
+    ],
+    "/trips/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/trips/page.js"
+    ],
+    "/portal/trips/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/portal/trips/route.js"
+    ],
+    "/portal/auth/login/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/portal/auth/login/route.js"
+    ],
+    "/portal/bookings/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/portal/bookings/route.js"
+    ],
+    "/portal/clients/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/portal/clients/route.js"
+    ],
+    "/portal/analytics/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/portal/analytics/route.js"
+    ],
+    "/portal/auth/logout/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/portal/auth/logout/route.js"
     ]
   }
 }

@@ -51,18 +51,6 @@ export default function DashboardPage() {
           <BookingForm />
         </div>
 
-        {/* Footnote */}
-        <p
-          className="mt-8"
-          style={{
-            color: "var(--color-text-muted)",
-            fontFamily: "var(--font-mono)",
-            fontSize: "0.62rem",
-            letterSpacing: "0.06em",
-          }}
-        >
-          STATUS_DEFAULT → New &nbsp;·&nbsp; All submissions are reviewed by an agent
-        </p>
       </div>
     </div>
   );

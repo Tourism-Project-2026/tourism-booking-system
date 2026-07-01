@@ -39,19 +39,8 @@ export default async function RootLayout({
               borderColor: "var(--color-border-subtle)",
             }}
           >
-            <div className="max-w-screen-2xl mx-auto flex items-center justify-between">
-              {isAdmin ? (
-                <>
-                  <span style={{ fontFamily: "var(--font-mono)" }}>
-                    TRAVEL/PORTAL v0.1.0
-                  </span>
-                  <span>2026 &mdash; Internal Use Only</span>
-                </>
-              ) : (
-                <span style={{ margin: "0 auto" }}>
-                  Travel Portal &copy; 2026
-                </span>
-              )}
+            <div className="max-w-screen-2xl mx-auto flex items-center justify-center">
+              <span>Travel Portal &copy; 2026</span>
             </div>
           </footer>
         </div>
