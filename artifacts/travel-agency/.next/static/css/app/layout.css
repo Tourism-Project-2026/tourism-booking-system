@@ -501,9 +501,6 @@
   .py-12 {
     padding-block: calc(var(--spacing) * 12);
   }
-  .pt-12 {
-    padding-top: calc(var(--spacing) * 12);
-  }
   .pt-24 {
     padding-top: calc(var(--spacing) * 24);
   }
@@ -661,7 +658,7 @@ body {
   background-color: var(--color-background);
   color: var(--color-text-primary);
   font-family: var(--font-sans);
-  font-size: 14px;
+  font-size: 17px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
