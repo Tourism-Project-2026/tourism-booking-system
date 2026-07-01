@@ -38,7 +38,7 @@ function Field({
         htmlFor={id}
         className="text-xs font-medium uppercase tracking-widest"
         style={{
-          color: "var(--color-text-muted)",
+          color: "var(--color-accent)",
           fontFamily: "var(--font-mono)",
           fontSize: "0.65rem",
           letterSpacing: "0.12em",
@@ -149,7 +149,7 @@ export function BookingForm({ onSuccess, className }: BookingFormProps) {
         <h2
           className="text-xs font-semibold uppercase tracking-widest"
           style={{
-            color: "var(--color-text-muted)",
+            color: "var(--color-accent)",
             fontFamily: "var(--font-mono)",
             letterSpacing: "0.12em",
           }}
@@ -235,7 +235,7 @@ export function BookingForm({ onSuccess, className }: BookingFormProps) {
             htmlFor="notes"
             className="text-xs font-medium uppercase tracking-widest"
             style={{
-              color: "var(--color-text-muted)",
+              color: "var(--color-accent)",
               fontFamily: "var(--font-mono)",
               fontSize: "0.65rem",
               letterSpacing: "0.12em",
@@ -281,11 +281,11 @@ export function BookingForm({ onSuccess, className }: BookingFormProps) {
           style={{
             backgroundColor:
               isSubmitting || !form.client_name.trim()
-                ? "var(--color-surface-raised)"
+                ? "transparent"
                 : "var(--color-accent)",
             color:
               isSubmitting || !form.client_name.trim()
-                ? "var(--color-text-muted)"
+                ? "var(--color-accent)"
                 : "#000",
             fontFamily: "var(--font-mono)",
             letterSpacing: "0.12em",
@@ -293,7 +293,8 @@ export function BookingForm({ onSuccess, className }: BookingFormProps) {
               isSubmitting || !form.client_name.trim()
                 ? "not-allowed"
                 : "pointer",
-            border: "none",
+            border: "1px solid var(--color-accent)",
+            opacity: isSubmitting || !form.client_name.trim() ? 0.45 : 1,
           }}
         >
           {isSubmitting ? "Submitting…" : "Submit"}
