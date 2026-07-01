@@ -29,7 +29,7 @@ export default async function RootLayout({
           style={{ backgroundColor: "var(--color-background)" }}
         >
           <Navigation isAdmin={isAdmin} />
-          <main className="flex-1 px-6 py-6 max-w-screen-2xl mx-auto w-full">
+          <main className="flex-1 px-6 py-6 pb-12 max-w-screen-2xl mx-auto w-full">
             {children}
           </main>
           <footer

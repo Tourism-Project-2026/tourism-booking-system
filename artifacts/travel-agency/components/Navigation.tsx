@@ -152,24 +152,7 @@ export function Navigation({ isAdmin }: NavigationProps) {
                 </button>
               </div>
             </div>
-          ) : (
-            <Link
-              href="/login"
-              style={{
-                padding: "5px 14px",
-                border: "1px solid var(--color-border)",
-                borderRadius: "4px",
-                color: "var(--color-text-secondary)",
-                fontFamily: "var(--font-mono)",
-                fontSize: "0.65rem",
-                letterSpacing: "0.08em",
-                textDecoration: "none",
-                transition: "border-color 0.15s",
-              }}
-            >
-              STAFF LOGIN
-            </Link>
-          )}
+          ) : null}
         </div>
       </div>
     </header>

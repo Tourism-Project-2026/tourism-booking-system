@@ -1,5 +1,3 @@
 {
-  "/portal/trips/route": "app/portal/trips/route.js",
-  "/page": "app/page.js",
-  "/trips/page": "app/trips/page.js"
+  "/page": "app/page.js"
 }
