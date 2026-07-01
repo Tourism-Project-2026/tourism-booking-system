@@ -1,0 +1,2 @@
+- [Next.js standalone monorepo path](nextjs-standalone-monorepo.md) — server.js is nested at the full workspace path inside standalone/, not at the root
+- [Replit deployment gitignore cleanup](replit-deployment-gitignore.md) — Replit removes gitignored files from container images after build; production build output must not be gitignored

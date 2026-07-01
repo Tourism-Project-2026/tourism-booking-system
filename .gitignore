@@ -48,6 +48,8 @@ Thumbs.db
 .cache/
 .local/
 
-# Next.js build output
-.next/
+# Next.js - only ignore dev cache, not production build output
+# (Replit deployment removes gitignored files from container images,
+#  so .next/standalone/ must not be gitignored for autoscale to work)
+.next/cache/
 out/
