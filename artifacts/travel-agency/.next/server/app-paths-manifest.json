@@ -1,13 +1,11 @@
 {
-  "/portal/bookings/[id]/route": "app/portal/bookings/[id]/route.js",
-  "/portal/trips/[id]/route": "app/portal/trips/[id]/route.js",
-  "/portal/clients/[id]/route": "app/portal/clients/[id]/route.js",
   "/portal/bookings/route": "app/portal/bookings/route.js",
-  "/portal/trips/route": "app/portal/trips/route.js",
+  "/portal/bookings/[id]/route": "app/portal/bookings/[id]/route.js",
   "/portal/clients/route": "app/portal/clients/route.js",
+  "/portal/clients/[id]/route": "app/portal/clients/[id]/route.js",
   "/page": "app/page.js",
-  "/analytics/page": "app/analytics/page.js",
   "/bookings/page": "app/bookings/page.js",
+  "/analytics/page": "app/analytics/page.js",
   "/trips/page": "app/trips/page.js",
   "/clients/page": "app/clients/page.js"
 }
