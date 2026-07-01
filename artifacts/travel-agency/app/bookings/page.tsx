@@ -145,6 +145,17 @@ export default function BookingsPage() {
     );
   }
 
+  async function handleDelete(id: number, name: string) {
+    if (!window.confirm(`Are you sure you want to delete booking #${id} for "${name}"? This cannot be undone.`)) return;
+    try {
+      const res = await fetch(`/portal/bookings/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete");
+      setBookingsList((prev) => prev.filter((b) => b.id !== id));
+    } catch {
+      alert("Failed to delete booking. Please try again.");
+    }
+  }
+
   const filtered = filter === "All" ? bookingsList : bookingsList.filter((b) => b.status === filter);
 
   const counts: Record<string, number> = { All: bookingsList.length };
@@ -226,7 +237,7 @@ export default function BookingsPage() {
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ borderBottom: "1px solid var(--color-border)" }}>
-                {["ID", "Client", "Phone", "Destination", "Trip Period", "Notes", "Status", "Created"].map((h) => (
+                {["ID", "Client", "Phone", "Destination", "Trip Period", "Notes", "Status", "Created", ""].map((h) => (
                   <th
                     key={h}
                     style={{
@@ -282,6 +293,27 @@ export default function BookingsPage() {
                   </td>
                   <td style={{ padding: "12px 16px", fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "var(--color-text-muted)", whiteSpace: "nowrap" }}>
                     {new Date(b.created_at).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
+                  </td>
+                  <td style={{ padding: "12px 16px", whiteSpace: "nowrap" }}>
+                    <button
+                      onClick={() => void handleDelete(b.id, b.client_name)}
+                      style={{
+                        padding: "3px 10px",
+                        background: "none",
+                        border: "1px solid var(--color-danger)",
+                        borderRadius: "3px",
+                        color: "var(--color-danger)",
+                        fontFamily: "var(--font-mono)",
+                        fontSize: "0.6rem",
+                        letterSpacing: "0.07em",
+                        cursor: "pointer",
+                        opacity: 0.7,
+                      }}
+                      onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
+                      onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.7"; }}
+                    >
+                      DELETE
+                    </button>
                   </td>
                 </tr>
               ))}

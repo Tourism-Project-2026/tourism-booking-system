@@ -99,6 +99,17 @@ export default function ClientsPage() {
       setForm((prev) => ({ ...prev, [key]: e.target.value }));
   }
 
+  async function handleDelete(id: number, name: string) {
+    if (!window.confirm(`Are you sure you want to delete client "${name}"? This cannot be undone.`)) return;
+    try {
+      const res = await fetch(`/portal/clients/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete");
+      setClientList((prev) => prev.filter((c) => c.id !== id));
+    } catch {
+      alert("Failed to delete client. Please try again.");
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
@@ -277,7 +288,7 @@ export default function ClientsPage() {
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ borderBottom: "1px solid var(--color-border)" }}>
-                {["Client", "Email", "Phone", "Country", "Notes", "Joined"].map((h) => (
+                {["Client", "Email", "Phone", "Country", "Notes", "Joined", ""].map((h) => (
                   <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontFamily: "var(--font-mono)", fontSize: "0.62rem", letterSpacing: "0.12em", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: 500, background: "var(--color-surface-raised)" }}>
                     {h}
                   </th>
@@ -303,6 +314,27 @@ export default function ClientsPage() {
                   </td>
                   <td style={{ padding: "12px 16px", fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "var(--color-text-muted)", whiteSpace: "nowrap" }}>
                     {new Date(c.created_at).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
+                  </td>
+                  <td style={{ padding: "12px 16px", whiteSpace: "nowrap" }}>
+                    <button
+                      onClick={() => void handleDelete(c.id, c.name)}
+                      style={{
+                        padding: "3px 10px",
+                        background: "none",
+                        border: "1px solid var(--color-danger)",
+                        borderRadius: "3px",
+                        color: "var(--color-danger)",
+                        fontFamily: "var(--font-mono)",
+                        fontSize: "0.6rem",
+                        letterSpacing: "0.07em",
+                        cursor: "pointer",
+                        opacity: 0.7,
+                      }}
+                      onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
+                      onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.7"; }}
+                    >
+                      DELETE
+                    </button>
                   </td>
                 </tr>
               ))}

@@ -3,6 +3,30 @@ import { db } from "@/lib/db";
 import { bookings } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const bookingId = parseInt(id, 10);
+    if (isNaN(bookingId)) {
+      return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
+    }
+    const [deleted] = await db
+      .delete(bookings)
+      .where(eq(bookings.id, bookingId))
+      .returning();
+    if (!deleted) {
+      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+    }
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error("[DELETE /portal/bookings/:id]", error);
+    return NextResponse.json({ error: "Failed to delete booking" }, { status: 500 });
+  }
+}
+
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }

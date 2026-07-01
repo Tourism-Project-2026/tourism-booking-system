@@ -105,6 +105,17 @@ export function TripsClient({ isAdmin }: TripsClientProps) {
     ) => setForm((prev) => ({ ...prev, [key]: e.target.value }));
   }
 
+  async function handleDelete(id: number, name: string) {
+    if (!window.confirm(`Are you sure you want to delete trip "${name}"? This cannot be undone.`)) return;
+    try {
+      const res = await fetch(`/portal/trips/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete");
+      setTripsList((prev) => prev.filter((t) => t.id !== id));
+    } catch {
+      alert("Failed to delete trip. Please try again.");
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
@@ -433,21 +444,44 @@ export function TripsClient({ isAdmin }: TripsClientProps) {
                       {trip.destination}
                     </p>
                   </div>
-                  <span
-                    style={{
-                      background: colors.bg,
-                      color: colors.text,
-                      border: `1px solid ${colors.text}30`,
-                      fontFamily: "var(--font-mono)",
-                      fontSize: "0.6rem",
-                      letterSpacing: "0.08em",
-                      padding: "2px 8px",
-                      borderRadius: "3px",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {trip.status.toUpperCase()}
-                  </span>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "6px" }}>
+                    <span
+                      style={{
+                        background: colors.bg,
+                        color: colors.text,
+                        border: `1px solid ${colors.text}30`,
+                        fontFamily: "var(--font-mono)",
+                        fontSize: "0.6rem",
+                        letterSpacing: "0.08em",
+                        padding: "2px 8px",
+                        borderRadius: "3px",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {trip.status.toUpperCase()}
+                    </span>
+                    {isAdmin && (
+                      <button
+                        onClick={() => void handleDelete(trip.id, trip.name)}
+                        style={{
+                          padding: "2px 8px",
+                          background: "none",
+                          border: "1px solid var(--color-danger)",
+                          borderRadius: "3px",
+                          color: "var(--color-danger)",
+                          fontFamily: "var(--font-mono)",
+                          fontSize: "0.58rem",
+                          letterSpacing: "0.07em",
+                          cursor: "pointer",
+                          opacity: 0.7,
+                        }}
+                        onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
+                        onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.7"; }}
+                      >
+                        DELETE
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 {trip.description && (
