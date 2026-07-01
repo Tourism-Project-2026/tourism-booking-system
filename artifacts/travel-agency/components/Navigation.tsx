@@ -116,14 +116,8 @@ export function Navigation() {
                   border: "1px solid var(--color-accent)",
                 }}
               >
-                A
+                U
               </div>
-              <span
-                className="text-xs hidden sm:block"
-                style={{ color: "var(--color-text-secondary)", fontFamily: "var(--font-mono)" }}
-              >
-                admin
-              </span>
             </div>
           </div>
         </div>
